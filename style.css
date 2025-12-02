@@ -1,0 +1,165 @@
+body {
+  margin: 0;
+  font-family: 'Arial', sans-serif;
+  background: #0d0d0d;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+.container {
+  width: 95%;
+  max-width: 1000px;
+  text-align: center;
+}
+
+h1 {
+  margin-bottom: 20px;
+  color: #00ff00;
+  text-shadow: 0 0 20px #ffffff;
+}
+
+.file-input-wrapper {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+#audioFile {
+  display: none;
+}
+
+.file-label {
+  display: inline-block;
+  padding: 12px 25px;
+  background: linear-gradient(45deg, #6f00ff, #2853ca);
+  border-radius: 30px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.file-label:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 25px #ffffff;
+}
+
+.audio-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.album-art-wrapper {
+  position: relative;
+  width: 120px;
+  height: 120px;
+}
+
+.album-art-wrapper img {
+  width: 100%;
+  height: 100%;
+  border-radius: 15px;
+  object-fit: cover;
+  border: 3px solid #00ffb3;
+}
+
+.pulse-border {
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  border: 3px solid #00ffc8;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 0.7; }
+  50% { transform: scale(1.2); opacity: 0.3; }
+  100% { transform: scale(1); opacity: 0.7; }
+}
+
+.track-info {
+  text-align: left;
+}
+
+.timeline-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+#timeline {
+  position: relative;
+  flex: 1;
+  height: 8px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#progress {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg,#00f7ff,#28ca6b);
+  border-radius: 5px;
+}
+
+#visualizer {
+  width: 100%;
+  height: 350px;
+  background: #111;
+  border-radius: 15px;
+  margin-bottom: 20px;
+}
+
+.spectrum-selector button {
+  padding: 12px 25px;
+  margin: 5px;
+  background: linear-gradient(45deg, #8c00ff, #4028ca);
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  color: #fff;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.spectrum-selector button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px #ff0080;
+}
+.audio-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.audio-controls button {
+  background: linear-gradient(45deg,#00ffea,#6628ca);
+  border: none;
+  padding: 10px 15px;
+  border-radius: 20px;
+  cursor: pointer;
+  color: #fff;
+  font-size: 18px;
+  transition: 0.3s;
+}
+
+.audio-controls button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 15px #00ffc8;
+}
+
+.audio-controls input[type="range"] {
+  width: 100px;
+}

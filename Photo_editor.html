@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Photo Editor(new_Update)</title>
+  <link rel="icon" type="image/x-icon" href="primium photo.jpg">
+  <style>
+        body {
+           
+            cursor: url('https://cur.cursors-4u.net/cursors/cur-2/cur103.cur'), auto; 
+        }
+    </style>
+  <style>
+    :root{
+      --bg:#0b1020; --card:#0f1724; --muted:#9aa4bf; --accent:#7c3aed; --glass: rgba(255,255,255,0.03);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg),#081025);font-family:Inter,ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial;color:#e6eef8}
+    .app{max-width:1200px;margin:28px auto;padding:20px;display:grid;grid-template-columns:320px 1fr;gap:18px}
+    .panel{background:linear-gradient(180deg,var(--card),#0b1220);border-radius:14px;padding:14px;box-shadow:0 6px 30px rgba(2,6,23,0.6);}
+    h2{margin:0 0 10px 0;font-size:16px}
+    .controls{display:flex;flex-direction:column;gap:10px}
+    button,input[type=file]{appearance:none}
+    .btn{background:linear-gradient(90deg,var(--accent),#5b21b6);border:none;color:white;padding:8px 12px;border-radius:8px;cursor:pointer}
+    .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.04)}
+
+    /* sliders and groups */
+    .group{background:var(--glass);padding:10px;border-radius:10px}
+    label{font-size:13px;color:var(--muted);display:block;margin-bottom:6px}
+    input[type=range]{width:100%}
+    .row{display:flex;gap:8px;align-items:center}
+    .row .small{font-size:12px;color:var(--muted)}
+
+    /* canvas container */
+    .canvas-wrap{position:relative;height:76vh;min-height:420px;border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,0.03);background:linear-gradient(180deg,#071223,#0b1428)}
+    canvas{width:100%;height:100%;display:block;cursor:grab}
+    .overlay-top{position:absolute;left:16px;top:16px;background:rgba(0,0,0,0.45);padding:8px 10px;border-radius:8px;font-size:13px}
+    .overlay-right{position:absolute;right:16px;top:16px;display:flex;gap:8px}
+    .hint{position:absolute;left:50%;transform:translateX(-50%);bottom:12px;background:rgba(0,0,0,0.35);padding:8px 12px;border-radius:999px;font-size:13px}
+
+    /* history thumbnails */
+    .history{display:flex;gap:8px;overflow:auto;padding-top:8px}
+    .history img{height:46px;border-radius:6px;border:2px solid rgba(255,255,255,0.03)}
+
+    /* crop overlay border handles */
+    .crop-handle{position:absolute;width:12px;height:12px;background:var(--accent);border-radius:3px}
+
+    /* responsive */
+    @media (max-width:980px){.app{grid-template-columns:1fr;max-width:940px}.panel{padding:12px}}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="panel">
+      <h2>Tools</h2>
+      <div class="controls">
+        <div class="group">
+          <label>Upload / Drag & Drop</label>
+          <div style="display:flex;gap:8px">
+            <input id="fileInput" type="file" accept="image/*" />
+            <button id="loadSample" class="btn ghost"></button>
+          </div>
+          <small style="color:var(--muted);display:block;margin-top:6px">You can also drag an image onto the canvas area.</small>
+        </div>
+
+        <div class="group">
+          <label>Transform</label>
+          <div class="row" style="justify-content:space-between">
+            <button id="rotateL" class="btn ghost">⟲ Rotate -90°</button>
+            <button id="rotateR" class="btn ghost">⟳ Rotate +90°</button>
+          </div>
+          <div class="row" style="margin-top:8px">
+            <button id="flipH" class="btn ghost">Flip Horizontal</button>
+            <button id="flipV" class="btn ghost">Flip Vertical</button>
+          </div>
+          <div class="row" style="margin-top:8px">
+            <button id="reset" class="btn">Reset</button>
+            <button id="downloadPng" class="btn">Download PNG</button>
+          </div>
+        </div>
+
+        <div class="group">
+          <label>Crop</label>
+          <div class="row">
+            <button id="toggleCrop" class="btn ghost">Start Crop</button>
+            <button id="applyCrop" class="btn">Apply</button>
+            <button id="cancelCrop" class="btn ghost">Cancel</button>
+          </div>
+          <small class="small" style="margin-top:6px;color:var(--muted)">Click and drag on the canvas to create a crop rectangle.</small>
+        </div>
+
+        <div class="group">
+          <label>View</label>
+          <div class="row"><label class="small">Zoom</label><input id="zoomRange" type="range" min="0.1" max="3" step="0.01" value="1"></div>
+          <div class="row" style="margin-top:6px"><button id="zoomOut" class="btn ghost">-</button><button id="zoomIn" class="btn ghost">+</button><button id="center" class="btn ghost">Center</button></div>
+        </div>
+
+        <div class="group">
+          <label>Filters</label>
+          <label>Brightness <span id="brightVal">100%</span></label>
+          <input id="brightness" type="range" min="0" max="200" value="100">
+          <label>Contrast <span id="contrastVal">100%</span></label>
+          <input id="contrast" type="range" min="0" max="200" value="100">
+          <label>Saturation <span id="saturVal">100%</span></label>
+          <input id="saturation" type="range" min="0" max="200" value="100">
+          <label>Sepia <span id="sepiaVal">0%</span></label>
+          <input id="sepia" type="range" min="0" max="100" value="0">
+          <label>Grayscale <span id="grayVal">0%</span></label>
+          <input id="grayscale" type="range" min="0" max="100" value="0">
+
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button class="btn ghost" data-preset="vintage">Vintage</button>
+            <button class="btn ghost" data-preset="bw">B&amp;W</button>
+            <button class="btn ghost" data-preset="bright">Bright</button>
+          </div>
+        </div>
+
+        <div class="group">
+          <label>History</label>
+          <div style="display:flex;gap:8px;margin-bottom:8px">
+            <button id="undo" class="btn ghost">Undo</button>
+            <button id="redo" class="btn ghost">Redo</button>
+            <button id="saveState" class="btn">Save State</button>
+          </div>
+          <div class="history" id="historyBar"></div>
+        </div>
+
+      </div>
+    </aside>
+
+    <main>
+      <div class="panel canvas-wrap" id="canvasWrap">
+        <div class="overlay-top" id="meta">No image loaded</div>
+        <div class="overlay-right">
+          <button id="fit" class="btn ghost">Fit</button>
+          <button id="full" class="btn ghost">Full</button>
+        </div>
+        <canvas id="editorCanvas"></canvas>
+        <div class="hint">Use mouse or touch: drag to pan, wheel to zoom, shift+drag to crop when crop mode active</div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Advanced Photo Editor - Vanilla JS
+    // Features: upload/dragdrop, pan/zoom, rotate, flip, crop selection, filters, presets, history, download
+
+    const canvas = document.getElementById('editorCanvas');
+    const ctx = canvas.getContext('2d', { alpha: false });
+    const wrap = document.getElementById('canvasWrap');
+    const meta = document.getElementById('meta');
+
+    // Input elements
+    const fileInput = document.getElementById('fileInput');
+    const loadSample = document.getElementById('loadSample');
+    const rotateL = document.getElementById('rotateL');
+    const rotateR = document.getElementById('rotateR');
+    const flipH = document.getElementById('flipH');
+    const flipV = document.getElementById('flipV');
+    const resetBtn = document.getElementById('reset');
+    const downloadPng = document.getElementById('downloadPng');
+    const toggleCrop = document.getElementById('toggleCrop');
+    const applyCrop = document.getElementById('applyCrop');
+    const cancelCrop = document.getElementById('cancelCrop');
+    const zoomRange = document.getElementById('zoomRange');
+    const zoomIn = document.getElementById('zoomIn');
+    const zoomOut = document.getElementById('zoomOut');
+    const centerBtn = document.getElementById('center');
+    const fitBtn = document.getElementById('fit');
+    const fullBtn = document.getElementById('full');
+
+    const brightness = document.getElementById('brightness');
+    const contrast = document.getElementById('contrast');
+    const saturation = document.getElementById('saturation');
+    const sepia = document.getElementById('sepia');
+    const grayscale = document.getElementById('grayscale');
+    const brightVal = document.getElementById('brightVal');
+    const contrastVal = document.getElementById('contrastVal');
+    const saturVal = document.getElementById('saturVal');
+    const sepiaVal = document.getElementById('sepiaVal');
+    const grayVal = document.getElementById('grayVal');
+
+    const undoBtn = document.getElementById('undo');
+    const redoBtn = document.getElementById('redo');
+    const saveStateBtn = document.getElementById('saveState');
+    const historyBar = document.getElementById('historyBar');
+
+    // State
+    let img = new Image();
+    img.crossOrigin = 'anonymous';
+    let imgLoaded = false;
+
+    const state = {
+      zoom: 1,
+      offsetX: 0,
+      offsetY: 0,
+      rotation: 0, // degrees
+      flipH: 1,
+      flipV: 1,
+      filters: { brightness:100, contrast:100, saturation:100, sepia:0, grayscale:0 },
+      cropMode: false,
+      cropRect: null,
+    };
+
+    // History: store dataURLs
+    let history = [];
+    let historyIndex = -1;
+
+    // Resize canvas to container size
+    function resizeCanvas(){
+      const rect = wrap.getBoundingClientRect();
+      canvas.width = Math.max(400, Math.floor(rect.width));
+      canvas.height = Math.max(300, Math.floor(rect.height));
+      render();
+    }
+    window.addEventListener('resize', resizeCanvas);
+
+    // Helpers for filter string
+    function getFilterString(){
+      const f = state.filters;
+      return `brightness(${f.brightness}%) contrast(${f.contrast}%) saturate(${f.saturation}%) sepia(${f.sepia}%) grayscale(${f.grayscale}%)`;
+    }
+
+    // Draw function
+    function render(){
+      // clear
+      ctx.save();
+      ctx.setTransform(1,0,0,1,0,0);
+      ctx.fillStyle = '#071223';
+      ctx.fillRect(0,0,canvas.width,canvas.height);
+      ctx.restore();
+
+      if(!imgLoaded) return;
+
+      // apply filters
+      ctx.filter = getFilterString();
+
+      // center transform
+      ctx.save();
+      ctx.translate(canvas.width/2 + state.offsetX, canvas.height/2 + state.offsetY);
+      ctx.rotate(state.rotation * Math.PI / 180);
+      ctx.scale(state.zoom * state.flipH, state.zoom * state.flipV);
+
+      // draw image centered
+      ctx.drawImage(img, -img.naturalWidth/2, -img.naturalHeight/2);
+      ctx.restore();
+
+      // if crop rect exists, darken overlay and draw rect
+      if(state.cropRect){
+        ctx.save();
+        ctx.fillStyle = 'rgba(0,0,0,0.45)';
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+        ctx.clearRect(state.cropRect.x, state.cropRect.y, state.cropRect.w, state.cropRect.h);
+        ctx.strokeStyle = '#7c3aed'; ctx.lineWidth = 2; ctx.strokeRect(state.cropRect.x, state.cropRect.y, state.cropRect.w, state.cropRect.h);
+        ctx.restore();
+      }
+
+      // update meta text
+      meta.textContent = `Image: ${img.naturalWidth}×${img.naturalHeight} • Zoom ${(state.zoom*100).toFixed(0)}% • Rotate ${state.rotation}°`;
+    }
+
+    // Load image from file or data URL
+    function loadImageFromSrc(src, pushHistoryAfter=true){
+      img = new Image(); img.crossOrigin = 'anonymous';
+      img.onload = ()=>{
+        imgLoaded = true;
+        // reset view to fit image
+        fitImageToCanvas();
+        render();
+        if(pushHistoryAfter) pushHistory();
+      };
+      img.src = src;
+    }
+
+    // Fit image to canvas (scale to fit)
+    function fitImageToCanvas(){
+      const cw = canvas.width, ch = canvas.height;
+      const iw = img.naturalWidth, ih = img.naturalHeight;
+      const scale = Math.min(cw/iw, ch/ih) * 0.9; // 90% to leave margins
+      state.zoom = Math.max(0.1, scale);
+      state.offsetX = 0; state.offsetY = 0; state.rotation = 0; state.flipH = 1; state.flipV = 1;
+      zoomRange.value = state.zoom;
+      updateFilterSlidersUI();
+    }
+
+    // Full: set zoom to 1 (100%)
+    function fullView(){ state.zoom = 1; zoomRange.value = state.zoom; render(); }
+
+    // Center: reset pan
+    function centerView(){ state.offsetX=0; state.offsetY=0; render(); }
+
+    // File input
+    fileInput.addEventListener('change', (e)=>{
+      const f = e.target.files && e.target.files[0];
+      if(!f) return;
+      const reader = new FileReader();
+      reader.onload = (ev)=> loadImageFromSrc(ev.target.result);
+      reader.readAsDataURL(f);
+    });
+
+    // Drag & drop
+    ['dragenter','dragover'].forEach(ev=>{wrap.addEventListener(ev,(e)=>{e.preventDefault();wrap.style.outline='2px dashed rgba(124,58,237,0.6)'});});
+    ['dragleave','drop'].forEach(ev=>{wrap.addEventListener(ev,(e)=>{e.preventDefault();wrap.style.outline='';});});
+    wrap.addEventListener('drop',(e)=>{
+      const f = e.dataTransfer.files && e.dataTransfer.files[0]; if(!f) return;
+      const reader = new FileReader(); reader.onload = (ev)=> loadImageFromSrc(ev.target.result); reader.readAsDataURL(f);
+    });
+
+    // Sample
+    loadSample.addEventListener('click', ()=>{
+      const sample = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000"><rect width="100%" height="100%" fill="#e9d5ff"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-size="64" fill="#6b21a8" font-family="Arial">Drop an image or Upload</text></svg>';
+      loadImageFromSrc(sample);
+    });
+
+    // Transforms
+    rotateL.addEventListener('click', ()=>{ state.rotation = (state.rotation - 90) % 360; render(); pushHistory(); });
+    rotateR.addEventListener('click', ()=>{ state.rotation = (state.rotation + 90) % 360; render(); pushHistory(); });
+    flipH.addEventListener('click', ()=>{ state.flipH *= -1; render(); pushHistory(); });
+    flipV.addEventListener('click', ()=>{ state.flipV *= -1; render(); pushHistory(); });
+    resetBtn.addEventListener('click', ()=>{ state.zoom=1; state.offsetX=0; state.offsetY=0; state.rotation=0; state.flipH=1; state.flipV=1; state.filters={brightness:100,contrast:100,saturation:100,sepia:0,grayscale:0}; updateFilterSlidersUI(); render(); pushHistory(); });
+
+    // Download
+    function download(type='image/png', filename='edited-image_by_HIRU_OFFICIAL.png'){
+      // create temp canvas and draw current view into it without overlays
+      const tmp = document.createElement('canvas'); tmp.width = canvas.width; tmp.height = canvas.height; const tctx = tmp.getContext('2d');
+      tctx.fillStyle = '#fff'; tctx.fillRect(0,0,tmp.width,tmp.height);
+      tctx.filter = getFilterString();
+      tctx.save(); tctx.translate(tmp.width/2 + state.offsetX, tmp.height/2 + state.offsetY); tctx.rotate(state.rotation * Math.PI/180); tctx.scale(state.zoom * state.flipH, state.zoom * state.flipV); tctx.drawImage(img, -img.naturalWidth/2, -img.naturalHeight/2); tctx.restore();
+      const link = document.createElement('a'); link.download = filename; link.href = tmp.toDataURL(type, 0.92); link.click();
+    }
+    downloadPng.addEventListener('click', ()=> download('image/png','edited-image_by_HIRU_OFFICIAL.png'));
+
+    // Zoom controls
+    zoomRange.addEventListener('input', (e)=>{ state.zoom = Number(e.target.value); render(); });
+    zoomIn.addEventListener('click', ()=>{ state.zoom = Math.min(5, state.zoom+0.1); zoomRange.value = state.zoom; render(); });
+    zoomOut.addEventListener('click', ()=>{ state.zoom = Math.max(0.1, state.zoom-0.1); zoomRange.value = state.zoom; render(); });
+    centerBtn.addEventListener('click', ()=>{ centerView(); pushHistory(); });
+    fitBtn.addEventListener('click', ()=>{ fitImageToCanvas(); pushHistory(); });
+    fullBtn.addEventListener('click', ()=>{ fullView(); pushHistory(); });
+
+    // Filters: update and show values
+    function updateFilterSlidersUI(){ brightVal.textContent = state.filters.brightness + '%'; contrastVal.textContent = state.filters.contrast + '%'; saturVal.textContent = state.filters.saturation + '%'; sepiaVal.textContent = state.filters.sepia + '%'; grayVal.textContent = state.filters.grayscale + '%';
+      brightness.value = state.filters.brightness; contrast.value = state.filters.contrast; saturation.value = state.filters.saturation; sepia.value = state.filters.sepia; grayscale.value = state.filters.grayscale;
+    }
+    [brightness,contrast,saturation,sepia,grayscale].forEach(el=>{
+      el.addEventListener('input',(e)=>{
+        state.filters[e.target.id] = Number(e.target.value); updateFilterSlidersUI(); render();
+      });
+    });
+
+    // Presets
+    document.querySelectorAll('[data-preset]').forEach(btn=> btn.addEventListener('click',(e)=>{
+      const p = e.target.dataset.preset;
+      if(p==='vintage') state.filters = {brightness:110,contrast:95,saturation:80,sepia:20,grayscale:0};
+      if(p==='bw') state.filters = {brightness:100,contrast:110,saturation:0,sepia:0,grayscale:100};
+      if(p==='bright') state.filters = {brightness:120,contrast:110,saturation:120,sepia:0,grayscale:0};
+      updateFilterSlidersUI(); render(); pushHistory();
+    }));
+
+    // History stack (stores dataURL of a snapshot image)
+    function pushHistory(){
+      try{
+        const snap = canvas.toDataURL('image/png');
+        if(historyIndex < history.length -1) history = history.slice(0, historyIndex+1);
+        history.push(snap); historyIndex = history.length -1;
+        refreshHistoryBar();
+      }catch(e){console.warn('history push failed',e)}
+    }
+    saveStateBtn.addEventListener('click', pushHistory);
+    function refreshHistoryBar(){ historyBar.innerHTML=''; history.forEach((h,i)=>{ const imgEl = document.createElement('img'); imgEl.src = h; imgEl.title = i; imgEl.addEventListener('click', ()=>{ loadImageFromSrc(h,false); historyIndex = i; refreshHistoryBar(); }); historyBar.appendChild(imgEl); }); }
+    undoBtn.addEventListener('click', ()=>{ if(historyIndex>0){ historyIndex--; loadImageFromSrc(history[historyIndex], false); refreshHistoryBar(); }});
+    redoBtn.addEventListener('click', ()=>{ if(historyIndex < history.length-1){ historyIndex++; loadImageFromSrc(history[historyIndex], false); refreshHistoryBar(); }});
+
+    // Crop logic
+    let isPointerDown = false; let startX=0, startY=0;
+    canvas.addEventListener('pointerdown',(e)=>{
+      canvas.setPointerCapture(e.pointerId);
+      isPointerDown = true; startX = e.clientX; startY = e.clientY;
+      // if crop mode: start rectangle
+      if(state.cropMode){
+        const rect = canvas.getBoundingClientRect(); const x = e.clientX - rect.left; const y = e.clientY - rect.top; state.cropRect = { x, y, w:0, h:0 }; render();
+      }
+    });
+    canvas.addEventListener('pointermove',(e)=>{
+      if(!isPointerDown) return;
+      const dx = e.movementX; const dy = e.movementY;
+      if(state.cropMode){
+        const rect = canvas.getBoundingClientRect(); const x = e.clientX - rect.left; const y = e.clientY - rect.top; const nx = Math.min(x, state.cropRect.x); const ny = Math.min(y, state.cropRect.y); const w = Math.abs(x - state.cropRect.x); const h = Math.abs(y - state.cropRect.y); state.cropRect = { x:nx, y:ny, w, h }; render();
+      } else {
+        // pan
+        state.offsetX += dx; state.offsetY += dy; render();
+      }
+    });
+    canvas.addEventListener('pointerup',(e)=>{ canvas.releasePointerCapture(e.pointerId); isPointerDown=false; if(!state.cropMode) pushHistory(); });
+
+    toggleCrop.addEventListener('click', ()=>{ state.cropMode = !state.cropMode; toggleCrop.textContent = state.cropMode? 'Crop: ON':'Start Crop'; if(!state.cropMode) state.cropRect=null; render(); });
+    cancelCrop.addEventListener('click', ()=>{ state.cropRect=null; state.cropMode=false; toggleCrop.textContent='Start Crop'; render(); });
+    applyCrop.addEventListener('click', ()=>{
+      if(!state.cropRect) return; const r = state.cropRect;
+      const tmp = document.createElement('canvas'); tmp.width = Math.max(1,Math.round(r.w)); tmp.height = Math.max(1,Math.round(r.h)); const tctx = tmp.getContext('2d');
+      // draw current canvas image to temp canvas (we'll use the rendered canvas)
+      tctx.drawImage(canvas, r.x, r.y, r.w, r.h, 0,0,tmp.width,tmp.height);
+      const data = tmp.toDataURL('image/png'); loadImageFromSrc(data); state.cropRect=null; state.cropMode=false; toggleCrop.textContent='Start Crop'; pushHistory();
+    });
+
+    // Mouse wheel zoom (ctrlKey to change speed)
+    canvas.addEventListener('wheel',(e)=>{
+      e.preventDefault(); const delta = -e.deltaY/1000; const speed = e.ctrlKey? 0.05:0.15; const newZoom = Math.max(0.1, state.zoom*(1+delta*speed));
+      // zoom towards mouse position
+      const rect = canvas.getBoundingClientRect(); const mx = e.clientX - rect.left; const my = e.clientY - rect.top;
+      // convert mouse to world coords -> adjust offset so zoom focuses on mouse
+      const wx = (mx - canvas.width/2 - state.offsetX)/(state.zoom); const wy = (my - canvas.height/2 - state.offsetY)/(state.zoom);
+      state.zoom = newZoom;
+      state.offsetX = mx - canvas.width/2 - wx*state.zoom; state.offsetY = my - canvas.height/2 - wy*state.zoom;
+      zoomRange.value = state.zoom; render();
+    }, { passive:false });
+
+    // Keyboard shortcuts
+    window.addEventListener('keydown',(e)=>{
+      if(e.key==='z' && (e.ctrlKey||e.metaKey)){ e.preventDefault(); if(e.shiftKey) redoBtn.click(); else undoBtn.click(); }
+      if(e.key==='+'||e.key==='=') zoomIn.click(); if(e.key==='-') zoomOut.click(); if(e.key==='0') centerBtn.click();
+    });
+
+    // Fit canvas initially
+    resizeCanvas();
+
+    // utility: load data URL into img variable and render
+    function loadImageFromSrc(src, push=true){
+      img = new Image(); img.crossOrigin='anonymous'; img.onload = ()=>{ imgLoaded=true; fitImageToCanvas(); render(); if(push) pushHistory(); };
+      img.src = src; }
+
+    // initial sample
+    loadSample.click();
+
+    // ensure first push when sample loaded (handled by loadImageFromSrc)
+  </script>
+</body>
+</html>

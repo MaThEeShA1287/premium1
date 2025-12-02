@@ -1,0 +1,627 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>HIRU_OFFICIAL — Premium</title>
+<link rel="icon" type="image/x-icon" href="primium photo.jpg">
+<style>
+        body {
+           
+            cursor: url('http://www.rw-designer.com/cursor-extern.php?id=235233'), auto; 
+        }
+</style>
+<meta name="description" content="HIRU_OFFICIAL Premium Portal" />
+<style>
+  /* --- Base / Reset --- */
+  :root{
+    --bg1: rgba(10,12,20,1);
+    --glass: rgba(255,255,255,0.06);
+    --accent: #22c1c3;
+    --accent-2: #2f80ed;
+    --soft: rgba(255,255,255,0.06);
+    --glass-border: rgba(255,255,255,0.08);
+    --text: #e9f0f2;
+    --muted: #b7c1c6;
+    --danger: #ff6b6b;
+    --light-bg: #f6f7fb;
+    --light-panel: rgba(255,255,255,0.9);
+    --light-text: #0b1116;
+  }
+  *{box-sizing:border-box;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;}
+  html,body{height:100%;margin:0;background:
+    radial-gradient(ellipse at top left, rgba(47,128,237,0.08), transparent 10%),
+    linear-gradient(180deg, rgba(2,6,23,1) 0%, rgba(6,9,20,1) 100%);
+    color:var(--text);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;transition:background .25s,color .25s}
+
+  /* Light theme overrides (applied to body.light) */
+  body.light{background: linear-gradient(180deg, #ffffff 0%, #f0f4fb 100%); color:var(--light-text)}
+  .wrap{max-width:1000px;margin:26px auto;padding:20px;display:grid;gap:18px;}
+  header{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+  .brand{display:flex;align-items:center;gap:12px}
+  .logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;font-weight:700;color:#052;box-shadow:0 6px 18px rgba(47,128,237,0.14)}
+  h1{margin:0;font-size:18px;letter-spacing:0.6px}
+  p.lead{margin:0;color:var(--muted);font-size:13px}
+
+  /* --- Card / Glass --- */
+  .card{background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));backdrop-filter: blur(8px);border-radius:14px;padding:18px;border:1px solid var(--glass-border);box-shadow: 0 6px 30px rgba(2,6,23,0.6)}
+  body.light .card{background:var(--light-panel);border:1px solid rgba(10,12,20,0.05);box-shadow:0 6px 18px rgba(10,12,20,0.06)}
+  .row{display:flex;gap:16px;flex-wrap:wrap}
+  .col{flex:1 1 300px;min-width:260px}
+
+  /* --- Forms --- */
+  label{display:block;font-size:12px;color:var(--muted);margin-bottom:8px}
+  input[type="text"], input[type="password"]{width:100%;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:var(--text);outline:none}
+  body.light input[type="text"], body.light input[type="password"]{background:#fff;color:var(--light-text);border:1px solid rgba(10,12,20,0.06)}
+  button{cursor:pointer;padding:10px 14px;border-radius:10px;border:0;background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#fff;font-weight:600;box-shadow:0 6px 18px rgba(47,128,237,0.12)}
+
+  .muted{color:var(--muted);font-size:14px}
+  .tiny{font-size:12px;color:var(--muted)}
+
+  /* --- App Layout --- */
+  .main-grid{display:grid;grid-template-columns: 1fr 360px;gap:18px}
+  @media (max-width:880px){ .main-grid{grid-template-columns:1fr} }
+
+  /* --- Protected Buttons --- */
+  .premium-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  @media (max-width:680px){ .premium-grid{grid-template-columns:1fr; } }
+  .feature{padding:18px;border-radius:12px;border:1px solid var(--glass-border);display:flex;flex-direction:column;gap:12px;align-items:flex-start}
+  .feature h3{margin:0;font-size:16px}
+  .feature p{margin:0;color:var(--muted);font-size:13px}
+  .linkbtn{width:100%;text-align:center;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:var(--text);font-weight:700}
+
+  /* --- Admin Panel --- */
+  .users-list{max-height:260px;overflow:auto;padding:8px;border-radius:8px;border:1px dashed rgba(255,255,255,0.03)}
+  .user-row{display:flex;align-items:center;gap:8px;padding:8px;border-radius:8px}
+  .chip{padding:6px 10px;border-radius:999px;background:rgba(255,255,255,0.03);font-weight:600}
+
+  /* small */
+  .small{font-size:13px}
+  .danger{background:transparent;border:1px solid rgba(255,107,107,0.12);color:var(--danger)}
+  .ok{background:transparent;border:1px solid rgba(34,193,195,0.12);color:var(--accent)}
+  .center{display:flex;align-items:center;justify-content:center}
+
+  footer{color:var(--muted);font-size:12px;text-align:center;padding:6px 0}
+  .note{font-size:12px;color:var(--muted);}
+
+  /* animations */
+  .fade-in{animation:fadeIn .28s ease both}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+  /* loader */
+  #loader{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,rgba(2,6,23,0.98),rgba(6,9,20,0.98));color:var(--text);z-index:9999}
+  .spinner{width:64px;height:64px;border-radius:50%;border:6px solid rgba(255,255,255,0.06);border-top-color:var(--accent);animation:spin 1s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* theme toggle */
+  #themeToggle{position:fixed;top:18px;right:18px;padding:8px 10px;border-radius:10px;border:0;background:rgba(255,255,255,0.04);color:var(--text);z-index:1000}
+
+  /* device badge */
+  #deviceBadge{position:fixed;bottom:14px;right:14px;padding:8px 10px;border-radius:10px;background:rgba(0,0,0,0.4);color:var(--text);font-size:13px;z-index:1000}
+  body.light #deviceBadge{background:rgba(0,0,0,0.06);color:var(--light-text)}
+
+</style>
+</head>
+<body>
+
+<!-- LOADER -->
+<div id="loader">
+  <div style="text-align:center">
+    <div class="spinner"></div>
+    <div style="margin-top:12px;font-size:14px;color:var(--muted)">Starting HIRU_OFFICIAL...</div>
+  </div>
+</div>
+
+<div class="wrap" id="app" style="display:none">
+  <header>
+    <div class="brand">
+      <div class="logo">H</div>
+      <div>
+        <h1>HIRU_OFFICIAL — Premium</h1>
+        <p class="lead">Secure owner & premium pages — demo single-file site</p>
+      </div>
+    </div>
+    <div id="session-area" class="tiny">
+      <!-- content changed by JS -->
+    </div>
+  </header>
+
+  <div class="main-grid">
+    <!-- Left column: Login / Protected area -->
+    <div>
+      <div id="auth-card" class="card fade-in">
+        <div id="login-section">
+          <h2 style="margin:0 0 8px 0">Sign in</h2>
+          <p class="muted">Use your account to access premium pages. Owners should use master credentials below.</p>
+          <form id="loginForm" style="margin-top:12px">
+            <label for="loginUser">Username</label>
+            <input id="loginUser" type="text" autocomplete="username" required />
+            <label for="loginPass" style="margin-top:12px">Password</label>
+            <input id="loginPass" type="password" autocomplete="current-password" required />
+            <div style="display:flex;gap:8px;margin-top:12px">
+              <button type="submit">Sign in</button>
+              <!-- Register button removed on request -->
+              <button type="button" id="master-hint" class="tiny" style="background:transparent;border:0;color:var(--muted)">Owner?</button>
+            </div>
+          </form>
+          <p class="note" style="margin-top:12px">Demo only — local accounts are saved in your browser storage.</p>
+        </div>
+
+        <!-- Register section intentionally removed (owner creates users via Admin panel) -->
+
+        <div id="protected-section" style="display:none;margin-top:6px">
+          <h2 style="margin:0 0 8px 0">Welcome, <span id="whoami">user</span></h2>
+          <p class="muted">Access your premium tools below.</p>
+
+          <div style="margin-top:12px" class="premium-grid">
+            <div class="feature">
+              <h3>Photo Editor</h3>
+              <p>Advanced image editing tools (link to your editor).</p>
+              <button class="linkbtn" data-link="Photo_editor.html" id="btn-photo">Open Photo Editor →</button>
+            </div>
+            <div class="feature">
+              <h3>Music Visualizer</h3>
+              <p>High-performance music visualizations (link here).</p>
+              <button class="linkbtn" data-link="visualizer.html" id="btn-visualizer">Open Visualizer →</button>
+            </div>
+            <div class="feature">
+              <h3>Music Remixer</h3>
+              <p>Remix tracks in your cloud playlist (link here).</p>
+              <button class="linkbtn" data-link="audiomixer.html" id="btn-remixer">Open Remixer →</button>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:8px;margin-top:16px">
+            <button id="logoutBtn" class="danger">Logout</button>
+            <button id="goAdmin" class="ok" style="display:none">Admin Panel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right column: Admin -->
+    <aside>
+      <div id="admin-card" class="card fade-in">
+        <h3 style="margin-top:0">Admin / Owner Panel</h3>
+        <p class="muted">Master login required. Master username: <strong>MATHEESHA</strong></p>
+
+        <div id="admin-locked" class="center" style="padding:18px 0">
+          <div>
+            <p class="tiny">Admin is locked. Sign in as master to open.</p>
+            <button id="open-admin" class="ok" style="margin-top:8px">Open Admin (master only)</button>
+          </div>
+        </div>
+
+        <div id="admin-area" style="display:none">
+          <p class="tiny muted">Create a new user account (owner creates other users). Passwords are hashed locally.</p>
+          <form id="adminCreate" style="margin-top:12px">
+            <label>New username</label>
+            <input id="newUser" type="text" required />
+            <label style="margin-top:8px">New password</label>
+            <input id="newPass" type="password" required />
+            <label style="margin-top:8px"><input id="isAdmin" type="checkbox" /> Make this user admin</label>
+            <div style="display:flex;gap:8px;margin-top:12px">
+              <button type="submit">Create user</button>
+              <button type="button" id="exportUsers" class="tiny" style="background:transparent;border:0;color:var(--muted)">Export (debug)</button>
+            </div>
+          </form>
+
+          <h4 style="margin-top:14px;margin-bottom:8px">Existing users</h4>
+          <div class="users-list" id="usersList"></div>
+
+          <div style="margin-top:12px" class="tiny muted">
+            Tip: Buttons above (Photo Editor / Visualizer / Remixer) have <code>data-link</code> attributes. Edit them in Admin or directly in the HTML.
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:14px">
+        <h4 style="margin:0 0 8px 0">Quick owner actions</h4>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <button id="setLinks" class="ok">Set feature links (admin)</button>
+          <button id="clearAll" class="danger">Clear all local accounts</button>
+        </div>
+        <p class="note" style="margin-top:12px">Use these tools carefully. Clearing removes all accounts saved in this browser.</p>
+      </div>
+
+    </aside>
+  </div>
+
+  <footer>
+    <div>HIRU_OFFICIAL — Powered by HIRU_OFFICIAL</div>
+  </footer>
+</div>
+
+<!-- Theme toggle + device badge -->
+<button id="themeToggle" title="Toggle theme">Toggle Theme</button>
+<div id="deviceBadge"></div>
+
+<script>
+/*
+  Single-file site with client-side auth.
+  Master credentials (hard-coded, per user's request):
+    username: MATHEESHA
+    password: 20789351
+
+  Changes made for you:
+    - Register UI removed; creation moved to Admin panel only
+    - Auto-detect device size and show badge
+    - Dark/Light theme toggle (persisted to localStorage)
+    - Loading animation on start
+  Other logic preserved from your prior file (user storage, hashing, admin flows)
+*/
+
+// ---------- Constants & Options ----------
+const MASTER_USERNAME = "MATHEESHA";
+const MASTER_PASSWORD = "20789351"; // as requested
+
+const opts = {
+  usersKey: 'hiru_users_v1',
+  sessionKey: 'hiru_session_v1',
+  themeKey: 'hiru_theme_v1'
+};
+
+// ---------- Small crypto helpers ----------
+function bytesToHex(bytes){
+  return Array.from(new Uint8Array(bytes)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+async function sha256Hex(str){
+  const enc = new TextEncoder();
+  const data = enc.encode(str);
+  const hash = await crypto.subtle.digest('SHA-256', data);
+  return bytesToHex(hash);
+}
+
+// ---------- Local storage helpers ----------
+function loadUsers(){
+  const raw = localStorage.getItem(opts.usersKey);
+  if(!raw) return [];
+  try { return JSON.parse(raw); } catch(e){ return []; }
+}
+function saveUsers(arr){
+  localStorage.setItem(opts.usersKey, JSON.stringify(arr));
+}
+function saveSession(sessionObj){
+  localStorage.setItem(opts.sessionKey, JSON.stringify(sessionObj));
+}
+function loadSession(){
+  const raw = localStorage.getItem(opts.sessionKey);
+  if(!raw) return null;
+  try{ return JSON.parse(raw); } catch(e){ return null; }
+}
+function clearSession(){ localStorage.removeItem(opts.sessionKey); }
+
+// ensure there's at least one example user (non-admin) for demo:
+(function ensureDemoUser(){
+  const users = loadUsers();
+  if(!users.find(u=>u.username === 'demo')) {
+    sha256Hex('demo').then(hash=>{
+      users.push({username:'demo',passhash:hash,isAdmin:false,created:Date.now()});
+      saveUsers(users);
+    });
+  }
+})();
+
+// ---------- UI Elements ----------
+const appWrap = document.getElementById('app');
+const loginForm = document.getElementById('loginForm');
+const loginUser = document.getElementById('loginUser');
+const loginPass = document.getElementById('loginPass');
+const protectedSection = document.getElementById('protected-section');
+const whoamiSpan = document.getElementById('whoami');
+const logoutBtn = document.getElementById('logoutBtn');
+const goAdminBtn = document.getElementById('goAdmin');
+const sessionArea = document.getElementById('session-area');
+
+const openAdminBtn = document.getElementById('open-admin');
+const adminArea = document.getElementById('admin-area');
+const adminLocked = document.getElementById('admin-locked');
+const adminCreateForm = document.getElementById('adminCreate');
+const newUserInput = document.getElementById('newUser');
+const newPassInput = document.getElementById('newPass');
+const isAdminCheckbox = document.getElementById('isAdmin');
+const usersListDIV = document.getElementById('usersList');
+const exportUsersBtn = document.getElementById('exportUsers');
+const clearAllBtn = document.getElementById('clearAll');
+const setLinksBtn = document.getElementById('setLinks');
+
+const btnPhoto = document.getElementById('btn-photo');
+const btnVisualizer = document.getElementById('btn-visualizer');
+const btnRemixer = document.getElementById('btn-remixer');
+
+const masterHintBtn = document.getElementById('master-hint');
+
+const themeToggle = document.getElementById('themeToggle');
+const deviceBadge = document.getElementById('deviceBadge');
+
+// ---------- Auth logic ----------
+async function attemptLogin(username, password){
+  username = String(username || '').trim();
+  password = String(password || '');
+  if(!username || !password) return {ok:false, msg:'Missing username or password'};
+
+  // check master first (exact match)
+  if(username === MASTER_USERNAME && password === MASTER_PASSWORD){
+    const session = {username:MASTER_USERNAME, isMaster:true, loginAt:Date.now()};
+    saveSession(session);
+    renderSession();
+    return {ok:true, master:true, session};
+  }
+
+  // else check local users
+  const users = loadUsers();
+  const user = users.find(u=> u.username.toLowerCase() === username.toLowerCase());
+  if(!user) return {ok:false, msg:'User not found'};
+  const hash = await sha256Hex(password);
+  if(hash === user.passhash){
+    const session = {username:user.username, isAdmin: user.isAdmin || false, isMaster:false, loginAt:Date.now()};
+    saveSession(session);
+    renderSession();
+    return {ok:true, session};
+  } else {
+    return {ok:false, msg:'Incorrect password'};
+  }
+}
+
+function logout(){
+  clearSession();
+  renderSession();
+}
+
+// ---------- UI Rendering ----------
+function renderUsersList(){
+  const users = loadUsers();
+  usersListDIV.innerHTML = '';
+  if(users.length===0){ usersListDIV.innerHTML = '<div class="tiny muted">No users</div>'; return; }
+  users.forEach((u, idx)=>{
+    const div = document.createElement('div');
+    div.className = 'user-row';
+    div.innerHTML = `
+      <div style="flex:1">
+        <div style="display:flex;gap:8px;align-items:center">
+          <div class="chip">${u.username}</div>
+          <div class="tiny muted">${u.isAdmin? 'admin':''}</div>
+        </div>
+        <div class="tiny muted" style="margin-top:6px">created: ${new Date(u.created).toLocaleString()}</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="tiny" data-idx="${idx}" data-action="reveal">Reveal</button>
+        <button class="tiny" data-idx="${idx}" data-action="delete">Delete</button>
+      </div>
+    `;
+    usersListDIV.appendChild(div);
+  });
+  // attach events
+  usersListDIV.querySelectorAll('button').forEach(btn=>{
+    btn.addEventListener('click', async (e)=>{
+      const idx = Number(btn.dataset.idx);
+      const action = btn.dataset.action;
+      const users = loadUsers();
+      const target = users[idx];
+      if(!target) return;
+      if(action === 'delete'){
+        if(!confirm('Delete user '+target.username+'?')) return;
+        users.splice(idx,1); saveUsers(users); renderUsersList();
+      } else if(action === 'reveal'){
+        // reveal: show prompt asking for master password to reveal the user's hash (owner-only)
+        const pass = prompt('Enter master password to reveal info (owner only):');
+        if(pass === MASTER_PASSWORD){
+          alert('User: '+target.username + '\nPassword hash (SHA-256 hex):\n'+target.passhash);
+        } else {
+          alert('Incorrect master password.');
+        }
+      }
+    });
+  });
+}
+
+function renderSession(){
+  const s = loadSession();
+  if(!s){
+    // not signed in
+    sessionArea.innerHTML = `<div class="tiny">Not signed in</div>`;
+    protectedSection.style.display = 'none';
+    document.getElementById('login-section').style.display = 'block';
+    adminLocked.style.display = 'block';
+    adminArea.style.display = 'none';
+    goAdminBtn.style.display = 'none';
+    whoamiSpan.textContent = '';
+    return;
+  }
+  // signed in
+  sessionArea.innerHTML = `<div class="tiny">Signed in as <strong>${s.username}</strong> ${s.isMaster? '(master)':''}</div>`;
+  whoamiSpan.textContent = s.username;
+  document.getElementById('login-section').style.display = 'none';
+  protectedSection.style.display = 'block';
+  // show admin button only for master or admin users
+  if(s.isMaster || s.isAdmin){
+    goAdminBtn.style.display = 'inline-block';
+  } else {
+    goAdminBtn.style.display = 'none';
+  }
+  // If master currently signed in, unlock admin panel automatically
+  if(s.isMaster){
+    adminLocked.style.display = 'none';
+    adminArea.style.display = 'block';
+    renderUsersList();
+  } else {
+    // adminArea visible only after clicking admin and having admin rights
+    adminLocked.style.display = 'block';
+    adminArea.style.display = 'none';
+  }
+}
+
+// ---------- Attach events ----------
+loginForm.addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const u = loginUser.value.trim();
+  const p = loginPass.value;
+  const res = await attemptLogin(u,p);
+  if(res.ok){
+    renderSession();
+    alert('Signed in as '+(res.session.username));
+  } else {
+    alert(res.msg || 'Sign in failed');
+  }
+  loginPass.value = '';
+});
+
+masterHintBtn.addEventListener('click', ()=>{
+  alert('Master login: username: MATHEESHA (case-sensitive). Use the master password you provided.');
+});
+
+logoutBtn.addEventListener('click', ()=>{
+  logout();
+  alert('Logged out');
+});
+
+openAdminBtn.addEventListener('click', async ()=>{
+  // verify master password: ask for credentials
+  const u = prompt('Enter admin username: (use master account)');
+  const p = prompt('Enter admin password:');
+  if(!u || !p){ alert('Cancelled'); return; }
+  const res = await attemptLogin(u,p);
+  if(res.ok && (res.master || res.session.isAdmin)){
+    // admin unlocked
+    adminLocked.style.display = 'none';
+    adminArea.style.display = 'block';
+    renderUsersList();
+    alert('Admin unlocked');
+  } else {
+    alert('Invalid master/admin credentials');
+  }
+});
+
+adminCreateForm.addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const u = newUserInput.value.trim();
+  const p = newPassInput.value;
+  const isAdmin = isAdminCheckbox.checked;
+  if(!u || !p){ alert('Provide username & password'); return; }
+  const users = loadUsers();
+  if(users.find(x=> x.username.toLowerCase() === u.toLowerCase())){ alert('User exists'); return; }
+  const hash = await sha256Hex(p);
+  users.push({username:u,passhash:hash,isAdmin:isAdmin,created:Date.now()});
+  saveUsers(users);
+  newUserInput.value=''; newPassInput.value=''; isAdminCheckbox.checked=false;
+  renderUsersList();
+  alert('User created: '+u);
+});
+
+exportUsersBtn.addEventListener('click', ()=>{
+  const users = loadUsers();
+  const txt = JSON.stringify(users, null, 2);
+  // show in prompt for copy or save
+  prompt('Users JSON (copy to backup):', txt);
+});
+
+clearAllBtn.addEventListener('click', ()=>{
+  if(!confirm('Clear ALL local accounts and sessions? This cannot be undone.')) return;
+  localStorage.removeItem(opts.usersKey);
+  localStorage.removeItem(opts.sessionKey);
+  // re-add demo user
+  sha256Hex('demo').then(hash=>{
+    const users = [{username:'demo',passhash:hash,isAdmin:false,created:Date.now()}];
+    saveUsers(users);
+    renderUsersList();
+    renderSession();
+    alert('Cleared. Demo user recreated.');
+  });
+});
+
+setLinksBtn.addEventListener('click', ()=>{
+  // owner sets link targets for the three feature buttons
+  const s = loadSession();
+  if(!s || !(s.isMaster || s.isAdmin)){
+    alert('Only signed-in owner/admin can set links. Use Admin -> Open Admin (master) first.');
+    return;
+  }
+  const pLink = prompt('Photo Editor link (URL or path):', btnPhoto.dataset.link || '#');
+  if(pLink !== null) btnPhoto.dataset.link = pLink;
+  const vLink = prompt('Music Visualizer link (URL or path):', btnVisualizer.dataset.link || '#');
+  if(vLink !== null) btnVisualizer.dataset.link = vLink;
+  const rLink = prompt('Music Remixer link (URL or path):', btnRemixer.dataset.link || '#');
+  if(rLink !== null) btnRemixer.dataset.link = rLink;
+  alert('Links updated. You can also edit them directly in HTML.');
+});
+
+[btnPhoto, btnVisualizer, btnRemixer].forEach(btn=>{
+  btn.addEventListener('click', (e)=>{
+    const url = btn.dataset.link;
+    if(!url || url === '#' || url.trim() === '') {
+      alert('No link set. Owner can set feature links via Admin -> Set feature links, or edit the HTML directly.');
+      return;
+    }
+    // open in new tab
+    window.open(url, '_blank');
+  });
+});
+
+// admin quick show
+goAdminBtn.addEventListener('click', ()=>{
+  // if session owner/admin -> reveal admin area
+  const s = loadSession();
+  if(!s || !(s.isMaster || s.isAdmin)){ alert('Only owner/admin can open Admin.'); return; }
+  adminLocked.style.display = 'none';
+  adminArea.style.display = 'block';
+  renderUsersList();
+});
+
+// ---------- Theme & Device helpers ----------
+function setTheme(theme){
+  if(theme === 'light'){
+    document.body.classList.add('light');
+    document.body.classList.remove('dark');
+    themeToggle.textContent = 'Dark Mode';
+  } else {
+    document.body.classList.add('dark');
+    document.body.classList.remove('light');
+    themeToggle.textContent = 'Light Mode';
+  }
+  localStorage.setItem(opts.themeKey, theme);
+}
+
+themeToggle.addEventListener('click', ()=>{
+  const current = localStorage.getItem(opts.themeKey) || 'dark';
+  const next = current === 'dark' ? 'light' : 'dark';
+  setTheme(next);
+});
+
+function detectDevice(){
+  const w = window.innerWidth;
+  const label = w < 768 ? 'Mobile View' : 'Desktop View';
+  deviceBadge.textContent = label;
+}
+window.addEventListener('resize', detectDevice);
+
+// ---------- Startup flow (loader) ----------
+async function startup(){
+  // theme from storage
+  const savedTheme = localStorage.getItem(opts.themeKey) || 'dark';
+  setTheme(savedTheme);
+
+  // detect device
+  detectDevice();
+
+  // small delay to show loader
+  await new Promise(r=>setTimeout(r, 800));
+
+  // reveal app
+  document.getElementById('loader').style.display = 'none';
+  appWrap.style.display = 'block';
+
+  // initial render
+  renderSession();
+  const sess = loadSession();
+  if(sess){
+    document.getElementById('login-section').style.display = 'none';
+    protectedSection.style.display = 'block';
+  }
+}
+
+// run startup
+startup();
+
+</script>
+</body>
+</html>

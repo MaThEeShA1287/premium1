@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Audio Visualizer</title>
+  <link rel="icon" type="image/x-icon" href="primium photo.jpg">
+  <style>
+        body {
+           
+            cursor: url('https://cur.cursors-4u.net/cursors/cur-2/cur103.cur'), auto; 
+        }
+    </style>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Audio Visualizer</h1>
+
+    <!-- File Selector -->
+    <div class="file-input-wrapper">
+      <input type="file" id="audioFile" accept="audio/*">
+      <label for="audioFile" class="file-label">🎵 Choose Audio</label>
+    </div>
+
+    <!-- Audio Info -->
+    <div class="audio-info">
+      
+      <div class="track-info">
+        <h2 id="trackName">No Track Selected</h2>
+        <div class="timeline-wrapper">
+          <span id="currentTime">00:00</span>
+          <div id="timeline">
+            <div id="progress"></div>
+          </div>
+          <span id="duration">00:00</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Audio Element -->
+    <audio id="audio"></audio>
+<!-- Audio Controls -->
+<div class="audio-controls">
+  <button id="playPause">▶️</button>
+  <button id="stop">⏹️</button>
+  <button id="rewind">⏪</button>
+  <button id="forward">⏩</button>
+  <input type="range" id="volume" min="0" max="1" step="0.01" value="0.5">
+</div>
+<audio id="audio"></audio>
+
+    <!-- Visualizer Canvas -->
+    <canvas id="visualizer"></canvas>
+
+    <!-- Spectrum Selector -->
+    <div class="spectrum-selector">
+      <button data-type="bar">Bar Spectrum</button>
+      <button data-type="line">Line Spectrum</button>
+      <button data-type="particles">Particle Effect</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
